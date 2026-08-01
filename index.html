@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ministránka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #3D2A5C;
+    --bg-2: #1B1129;
+    --paper: #FAF7FC;
+    --paper-deep: #E2D4F0;
+    --ink: #2A2138;
+    --ink-soft: #7B7089;
+    --accent: #7C4DA6;
+    --accent-deep: #5C3980;
+    --danger: #A34A72;
+    --radius: 16px;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow-x: hidden; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% 15%, var(--bg-1) 0%, var(--bg-2) 78%);
+    color: var(--ink);
+    font-family: var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .hidden { display: none !important; }
+
+  #loading { color: #d9cce9; font-size: 0.9rem; letter-spacing: 0.02em; }
+
+  /* Lock screen */
+  #lock-screen {
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.45), 0 6px 20px rgba(0,0,0,0.3);
+    padding: 52px 40px 44px;
+    max-width: 340px;
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+    animation: rise 0.5s ease both;
+  }
+
+  input[type="password"], input[type="text"], textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid var(--paper-deep);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #FDFBFE;
+    color: var(--ink);
+    font-family: var(--sans);
+    overflow-wrap: break-word;
+  }
+
+  textarea { line-height: 1.6; resize: vertical; min-height: 160px; overflow-wrap: break-word; word-break: break-word; }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,77,166,0.16);
+  }
+
+  button {
+    font-family: var(--sans);
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    padding: 13px 22px;
+    transition: transform 0.1s ease, opacity 0.15s ease, background 0.15s ease;
+  }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.55; cursor: default; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:focus:not(:focus-visible) { outline: none; }
+
+  .btn-primary { background: var(--accent); color: #FFFFFF; width: 100%; margin-top: 16px; }
+  .btn-primary:hover:not(:disabled) { background: var(--accent-deep); }
+  .btn-inline { width: auto; margin-top: 0; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--paper-deep) !important;
+    padding: 7px 15px;
+    font-size: 0.8rem;
+  }
+  .btn-ghost:hover { border-color: var(--accent) !important; color: var(--accent-deep); }
+
+  #error-msg { color: var(--danger); font-size: 0.85rem; margin: 16px 0 0; }
+
+  /* Main page */
+  #main-wrap { width: 100%; max-width: 1080px; min-width: 0; animation: rise 0.5s ease both; }
+
+  #page {
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.25);
+    padding: 40px 32px;
+    display: grid;
+    grid-template-columns: minmax(110px, 1fr) minmax(280px, 600px) minmax(110px, 1fr);
+    grid-template-areas:
+      "top top top"
+      "left center right";
+    column-gap: 26px;
+    row-gap: 10px;
+    align-items: start;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .topbar { grid-area: top; display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 14px; }
+
+  .pill {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    color: var(--accent-deep);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  #text-column { grid-area: center; min-width: 0; }
+
+  #site-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 2.3rem;
+    line-height: 1.2;
+    margin: 0 0 20px;
+    margin-left: -10px;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    width: calc(100% + 20px);
+    color: var(--ink);
+    border-radius: 8px;
+    overflow-wrap: break-word;
+  }
+  #site-title:focus { background: #FDFBFE; }
+  #site-title[readonly] { cursor: default; }
+  #site-title[readonly]:focus { border-color: transparent; box-shadow: none; background: transparent; }
+
+  #site-text {
+    font-size: 1.04rem;
+    line-height: 1.75;
+    color: var(--ink);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    margin-bottom: 8px;
+  }
+
+  #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
+
+  #admin-controls { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--paper-deep); }
+
+  #save-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  #save-status, #pw-status { font-size: 0.85rem; color: var(--ink-soft); }
+
+  details { margin-top: 22px; font-size: 0.9rem; }
+  details summary { cursor: pointer; color: var(--ink-soft); font-weight: 600; }
+  details summary:hover { color: var(--accent-deep); }
+
+  .pw-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .pw-row input { flex: 1; min-width: 170px; }
+
+  .theme-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .theme-swatch {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: none; padding: 0; cursor: pointer;
+    color: #fff; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .theme-swatch.active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 0 2px 6px rgba(0,0,0,0.25); }
+
+  /* Photo bars */
+  .photo-bar {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+    padding-top: 6px;
+  }
+  #photo-bar-left { grid-area: left; }
+  #photo-bar-right { grid-area: right; }
+
+  .polaroid {
+    --rot: 0deg;
+    --shift: 0px;
+    width: 128px;
+    background: #fff;
+    padding: 9px 9px 30px;
+    box-shadow: 0 14px 26px rgba(20,10,30,0.35), 0 3px 8px rgba(20,10,30,0.2);
+    position: relative;
+    transform: rotate(var(--rot)) translateX(var(--shift));
+    transition: transform 0.2s ease;
+  }
+  .polaroid.big { width: 158px; }
+  .polaroid:hover {
+    --rot: 0deg;
+    --shift: 0px;
+    transform: rotate(var(--rot)) translateX(var(--shift)) scale(1.07);
+    z-index: 5;
+  }
+
+  .polaroid .photo-inner { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--paper-deep); }
+  .polaroid img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+
+  .photo-delete {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    font-size: 15px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    transform: rotate(calc(-1 * var(--rot)));
+  }
+
+  .polaroid-controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 3px;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    transform: rotate(calc(-1 * var(--rot)));
+  }
+  .pc-btn {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 6px;
+    line-height: 1;
+  }
+  .pc-btn:hover { background: var(--paper-deep); color: var(--accent-deep); }
+  .pc-btn:active { transform: scale(0.9); }
+
+  /* Lightbox */
+  #lightbox {
+    position: fixed; inset: 0;
+    background: rgba(12,7,18,0.92);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 30px; cursor: zoom-out;
+  }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
+  @media (max-width: 900px) {
+    #page {
+      grid-template-columns: 1fr;
+      grid-template-areas: "top" "center" "left" "right";
+      padding: 32px 22px;
+    }
+    #lock-screen { padding: 44px 26px 36px; }
+    #site-title { font-size: 1.9rem; }
+    .photo-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 18px; }
+    .topbar { flex-wrap: wrap; row-gap: 8px; }
+  }
+
+  /* Phone-sized screens: tighter spacing, smaller polaroids, bigger tap targets */
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    #page { padding: 26px 16px; }
+    #lock-screen { padding: 38px 20px 30px; max-width: 100%; }
+    #site-title { font-size: 1.55rem; margin-left: -6px; width: calc(100% + 12px); padding: 4px 6px; }
+    #site-text, textarea#edit-text { font-size: 1rem; }
+
+    .photo-bar { gap: 16px; }
+    .polaroid { width: 96px; padding: 6px 6px 26px; }
+    .polaroid.big { width: 118px; }
+    .photo-delete { width: 30px; height: 30px; font-size: 17px; top: -10px; right: -10px; }
+    .pc-btn { font-size: 13px; padding: 4px 6px; }
+
+    #save-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .btn-inline { width: 100%; }
+
+    .pw-row { flex-direction: column; }
+    .pw-row input { min-width: 0; width: 100%; }
+
+    details summary { padding: 6px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">Načítám…</div>
+
+<div id="lock-screen" class="hidden">
+  <input type="password" id="password-input" placeholder="Heslo" autocomplete="current-password">
+  <button class="btn-primary" id="unlock-btn">Vstoupit</button>
+  <p id="error-msg" class="hidden"></p>
+</div>
+
+<div id="main-wrap" class="hidden">
+  <div id="page">
+    <div class="topbar">
+      <span id="role-badge" class="pill hidden">Režim správce</span>
+      <button class="btn-ghost" id="logout-btn">Odhlásit</button>
+    </div>
+
+    <div class="photo-bar" id="photo-bar-left"></div>
+
+    <div id="text-column">
+      <input id="site-title" type="text" readonly>
+      <div id="site-text"></div>
+      <textarea id="edit-text" class="hidden" placeholder="Sem napište text stránky…"></textarea>
+      <p id="empty-note" class="hidden">Zatím tu nic není.</p>
+
+      <div id="admin-controls" class="hidden">
+        <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
+        <div id="save-row">
+          <button class="btn-primary btn-inline" id="save-btn">Uložit změny</button>
+          <button class="btn-ghost" id="add-photo-btn">Přidat fotku</button>
+          <span id="save-status"></span>
+        </div>
+
+        <details>
+          <summary>Změnit hesla</summary>
+          <div class="pw-row">
+            <input type="password" id="new-admin-pass" placeholder="Nové heslo správce" autocomplete="new-password">
+            <input type="password" id="new-view-pass" placeholder="Nové heslo pro prohlížení" autocomplete="new-password">
+          </div>
+          <div class="pw-row">
+            <button class="btn-ghost" id="update-pw-btn">Uložit nová hesla</button>
+            <span id="pw-status"></span>
+          </div>
+        </details>
+
+        <details>
+          <summary>Změnit barvy</summary>
+          <div class="theme-row" id="theme-row"></div>
+        </details>
+      </div>
+    </div>
+
+    <div class="photo-bar" id="photo-bar-right"></div>
+  </div>
+</div>
+
+<div id="lightbox" class="hidden">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+(function() {
+  if (!window.storage) {
+    window.storage = {
+      get: async (key) => {
+        const item = localStorage.getItem(key);
+        if (item === null) throw new Error('not found');
+        return { value: item };
+      },
+      set: async (key, value) => {
+        localStorage.setItem(key, value);
+      }
+    };
+  }
+
+  const SALT = 'ministranka-salt-9f2';
+  const DEFAULT_ADMIN_PASS = 'A2';
+  const DEFAULT_VIEW_PASS = 'A3';
+  const MAX_DIM = 1600;
+  const JPEG_QUALITY = 0.8;
+  const SIZE_WARNING_BYTES = 4.3 * 1024 * 1024;
+
+  let state = {
+    role: null,
+    passwords: null,
+    content: { title: 'Milé Žulidlo,', text: '', photos: [], theme: 'purple' }
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  async function sha256(text) {
+    const enc = new TextEncoder().encode(text + SALT);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function loadPasswords() {
+    try {
+      const res = await window.storage.get('site-passwords', true);
+      state.passwords = JSON.parse(res.value);
+    } catch (e) {
+      state.passwords = {
+        adminHash: await sha256(DEFAULT_ADMIN_PASS),
+        viewHash: await sha256(DEFAULT_VIEW_PASS)
+      };
+    }
+  }
+
+  async function loadContent() {
+    try {
+      const res = await window.storage.get('site-content', true);
+      const parsed = JSON.parse(res.value);
+      state.content = Object.assign({ title: '', text: '', photos: [], theme: 'purple' }, parsed);
+    } catch (e) {
+    }
+    state.content.photos.forEach((p) => {
+      if (p.side !== 'left' && p.side !== 'right') {
+        p.side = (hashStr(p.id + 'd') % 2 === 0) ? 'left' : 'right';
+      }
+    });
+  }
+
+  function showError(msg) {
+    const el = $('error-msg');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  function openLightbox(src) {
+    $('lightbox-img').src = src;
+    $('lightbox').classList.remove('hidden');
+  }
+
+  $('lightbox').addEventListener('click', () => $('lightbox').classList.add('hidden'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') $('lightbox').classList.add('hidden');
+  });
+
+  function updateEmptyNote() {
+    const noPhotos = state.content.photos.length === 0;
+    const noText = !state.content.text || !state.content.text.trim();
+    const showEmpty = state.role !== 'admin' && noPhotos && noText;
+    $('empty-note').classList.toggle('hidden', !showEmpty);
+  }
+
+  function hashStr(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  function photoStyle(id) {
+    const rotHash = hashStr(id + 'r');
+    const sign = (rotHash % 2 === 0) ? 1 : -1;
+    const magnitude = 2 + ((rotHash % 1000) / 1000) * 5;
+    const rot = sign * magnitude;
+    const shift = ((hashStr(id + 's') % 1000) / 1000) * 22 - 11;
+    const big = (hashStr(id + 'z') % 2) === 0;
+    return { rot, shift, big };
+  }
+
+  const THEMES = {
+    purple:     { label: 'Fialová',       bg1: '#3D2A5C', bg2: '#1B1129', paper: '#FAF7FC', paperDeep: '#E2D4F0', ink: '#2A2138', inkSoft: '#7B7089', accent: '#7C4DA6', accentDeep: '#5C3980', danger: '#A34A72' },
+    emerald:    { label: 'Smaragdová',    bg1: '#1F4A3D', bg2: '#0E2620', paper: '#F6F8F3', paperDeep: '#DCE8D8', ink: '#1E2B24', inkSoft: '#6E7C71', accent: '#2F8F63', accentDeep: '#226B49', danger: '#B25444' },
+    midnight:   { label: 'Půlnoční modrá', bg1: '#223A5E', bg2: '#0F1B2E', paper: '#F5F7FA', paperDeep: '#D9E2EC', ink: '#1E2733', inkSoft: '#6B7686', accent: '#3B6EA5', accentDeep: '#2C517D', danger: '#B25757' },
+    terracotta: { label: 'Terakota',      bg1: '#5C3A2A', bg2: '#2B1810', paper: '#FBF3E9', paperDeep: '#EAD9C2', ink: '#3A2A1E', inkSoft: '#8A7259', accent: '#B4623E', accentDeep: '#8F4B2E', danger: '#A3454A' },
+    rose:       { label: 'Růžová',        bg1: '#5C2A44', bg2: '#2B0F1F', paper: '#FDF5F7', paperDeep: '#EFD7E0', ink: '#3A1E2A', inkSoft: '#8A6E78', accent: '#B14A72', accentDeep: '#8C3759', danger: '#A34A4A' }
+  };
+
+  function applyTheme(key) {
+    const t = THEMES[key] || THEMES.purple;
+    const root = document.documentElement.style;
+    root.setProperty('--bg-1', t.bg1);
+    root.setProperty('--bg-2', t.bg2);
+    root.setProperty('--paper', t.paper);
+    root.setProperty('--paper-deep', t.paperDeep);
+    root.setProperty('--ink', t.ink);
+    root.setProperty('--ink-soft', t.inkSoft);
+    root.setProperty('--accent', t.accent);
+    root.setProperty('--accent-deep', t.accentDeep);
+    root.setProperty('--danger', t.danger);
+  }
+
+  function renderThemeSwatches() {
+    const row = $('theme-row');
+    if (!row) return;
+    row.innerHTML = '';
+    const active = state.content.theme || 'purple';
+    Object.keys(THEMES).forEach((key) => {
+      const t = THEMES[key];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'theme-swatch' + (key === active ? ' active' : '');
+      btn.style.background = t.accent;
+      btn.title = t.label;
+      btn.setAttribute('aria-label', t.label);
+      btn.textContent = key === active ? '✓' : '';
+      btn.addEventListener('click', () => {
+        state.content.theme = key;
+        applyTheme(key);
+        renderThemeSwatches();
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  function moveWithinSide(photoId, direction) {
+    const arr = state.content.photos;
+    const idx = arr.findIndex(p => p.id === photoId);
+    if (idx === -1) return;
+    const side = arr[idx].side;
+    let swapIdx = -1;
+    if (direction === 'up') {
+      for (let i = idx - 1; i >= 0; i--) {
+        if (arr[i].side === side) { swapIdx = i; break; }
+      }
+    } else {
+      for (let i = idx + 1; i < arr.length; i++) {
+        if (arr[i].side === side) { swapIdx = i; break; }
+      }
+    }
+    if (swapIdx === -1) return;
+    [arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]];
+    renderPhotos();
+  }
+
+  function swapSide(photoId) {
+    const photo = state.content.photos.find(p => p.id === photoId);
+    if (!photo) return;
+    photo.side = photo.side === 'left' ? 'right' : 'left';
+    renderPhotos();
+  }
+
+  function buildPolaroid(photo) {
+    const style = photoStyle(photo.id);
+
+    const item = document.createElement('div');
+    item.className = 'polaroid' + (style.big ? ' big' : '');
+    item.style.setProperty('--rot', style.rot.toFixed(2) + 'deg');
+    item.style.setProperty('--shift', style.shift.toFixed(1) + 'px');
+
+    const inner = document.createElement('div');
+    inner.className = 'photo-inner';
+    const img = document.createElement('img');
+    img.src = photo.dataUrl;
+    img.alt = 'fotka';
+    img.addEventListener('click', () => openLightbox(photo.dataUrl));
+    inner.appendChild(img);
+    item.appendChild(inner);
+
+    if (state.role === 'admin') {
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'photo-delete';
+      del.innerHTML = '&times;';
+      del.setAttribute('aria-label', 'Smazat fotku');
+      del.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (confirm('Opravdu smazat tuto fotku?')) {
+          state.content.photos = state.content.photos.filter(p => p.id !== photo.id);
+          renderPhotos();
+        }
+      });
+      item.appendChild(del);
+
+      const controls = document.createElement('div');
+      controls.className = 'polaroid-controls';
+
+      const upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.className = 'pc-btn';
+      upBtn.innerHTML = '&#9650;';
+      upBtn.setAttribute('aria-label', 'Posunout nahoru');
+      upBtn.addEventListener('click', (ev) => { ev.stopPropagation(); moveWithinSide(photo.id, 'up'); });
+
+      const swapBtn = document.createElement('button');
+      swapBtn.type = 'button';
+      swapBtn.className = 'pc-btn';
+      swapBtn.innerHTML = '&#8646;';
+      swapBtn.setAttribute('aria-label', 'Přesunout na druhou stranu');
+      swapBtn.addEventListener('click', (ev) => { ev.stopPropagation(); swapSide(photo.id); });
+
+      const downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.className = 'pc-btn';
+      downBtn.innerHTML = '&#9660;';
+      downBtn.setAttribute('aria-label', 'Posunout dolů');
+      downBtn.addEventListener('click', (ev) => { ev.stopPropagation(); moveWithinSide(photo.id, 'down'); });
+
+      controls.appendChild(upBtn);
+      controls.appendChild(swapBtn);
+      controls.appendChild(downBtn);
+      item.appendChild(controls);
+    }
+
+    return item;
+  }
+
+  function renderPhotos() {
+    const leftBar = $('photo-bar-left');
+    const rightBar = $('photo-bar-right');
+    leftBar.innerHTML = '';
+    rightBar.innerHTML = '';
+
+    state.content.photos.forEach((photo) => {
+      const el = buildPolaroid(photo);
+      (photo.side === 'left' ? leftBar : rightBar).appendChild(el);
+    });
+
+    updateEmptyNote();
+  }
+
+  async function resizeAndCompress(file) {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    let { width, height } = bitmap;
+    if (width > MAX_DIM || height > MAX_DIM) {
+      if (width > height) {
+        height = Math.round(height * MAX_DIM / width);
+        width = MAX_DIM;
+      } else {
+        width = Math.round(width * MAX_DIM / height);
+        height = MAX_DIM;
+      }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+    return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+  }
+
+  $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
+
+  $('photo-upload').addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    for (const file of files) {
+      try {
+        const dataUrl = await resizeAndCompress(file);
+        const leftCount = state.content.photos.filter(p => p.side === 'left').length;
+        const rightCount = state.content.photos.filter(p => p.side === 'right').length;
+        const side = leftCount <= rightCount ? 'left' : 'right';
+        state.content.photos.push({ id: crypto.randomUUID(), dataUrl, side });
+      } catch (err) {
+        console.error('Zpracování fotky selhalo', err);
+      }
+    }
+    e.target.value = '';
+    renderPhotos();
+  });
+
+  function enterMain() {
+    $('lock-screen').classList.add('hidden');
+    $('main-wrap').classList.remove('hidden');
+
+    $('site-title').value = state.content.title || '';
+    $('site-text').textContent = state.content.text || '';
+    $('edit-text').value = state.content.text || '';
+
+    if (state.role === 'admin') {
+      $('role-badge').textContent = 'Režim správce';
+      $('role-badge').classList.remove('hidden');
+      $('site-title').removeAttribute('readonly');
+      $('site-text').classList.add('hidden');
+      $('edit-text').classList.remove('hidden');
+      $('admin-controls').classList.remove('hidden');
+      renderThemeSwatches();
+    } else {
+      $('role-badge').classList.add('hidden');
+      $('site-title').setAttribute('readonly', 'true');
+      $('site-text').classList.remove('hidden');
+      $('edit-text').classList.add('hidden');
+      $('admin-controls').classList.add('hidden');
+    }
+    renderPhotos();
+  }
+
+  $('unlock-btn').addEventListener('click', async () => {
+    const pass = $('password-input').value;
+    if (!pass) return;
+    $('unlock-btn').disabled = true;
+    const hash = await sha256(pass);
+    $('unlock-btn').disabled = false;
+    if (hash === state.passwords.adminHash) {
+      state.role = 'admin';
+      enterMain();
+    } else if (hash === state.passwords.viewHash) {
+      state.role = 'viewer';
+      enterMain();
+    } else {
+      showError('Špatné heslo, zkuste to znovu.');
+    }
+  });
+
+  $('password-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('unlock-btn').click();
+  });
+
+  $('logout-btn').addEventListener('click', () => {
+    state.role = null;
+    $('main-wrap').classList.add('hidden');
+    $('lock-screen').classList.remove('hidden');
+    $('password-input').value = '';
+    $('password-input').focus();
+    $('error-msg').classList.add('hidden');
+  });
+
+  $('save-btn').addEventListener('click', async () => {
+    state.content.title = $('site-title').value;
+    state.content.text = $('edit-text').value;
+
+    const json = JSON.stringify(state.content);
+    const status = $('save-status');
+    const btn = $('save-btn');
+
+    if (json.length > SIZE_WARNING_BYTES) {
+      status.textContent = 'Moc dat na uložení — smažte prosím pár fotek.';
+      status.style.color = 'var(--danger)';
+      return;
+    }
+
+    btn.disabled = true;
+    status.textContent = 'Ukládám…';
+    status.style.color = 'var(--ink-soft)';
+    try {
+      await window.storage.set('site-content', json, true);
+      status.textContent = 'Uloženo ✓';
+      $('site-text').textContent = state.content.text;
+    } catch (err) {
+      status.textContent = 'Uložení se nezdařilo. Zkuste to prosím znovu.';
+      status.style.color = 'var(--danger)';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('update-pw-btn').addEventListener('click', async () => {
+    const newAdmin = $('new-admin-pass').value;
+    const newView = $('new-view-pass').value;
+    const status = $('pw-status');
+
+    if (!newAdmin && !newView) {
+      status.textContent = 'Vyplňte alespoň jedno heslo.';
+      status.style.color = 'var(--danger)';
+      return;
+    }
+
+    if (newAdmin) state.passwords.adminHash = await sha256(newAdmin);
+    if (newView) state.passwords.viewHash = await sha256(newView);
+
+    try {
+      await window.storage.set('site-passwords', JSON.stringify(state.passwords), true);
+      status.textContent = 'Nová hesla uložena ✓';
+      status.style.color = 'var(--ink-soft)';
+      $('new-admin-pass').value = '';
+      $('new-view-pass').value = '';
+    } catch (err) {
+      status.textContent = 'Uložení hesel se nezdařilo.';
+      status.style.color = 'var(--danger)';
+    }
+  });
+
+  ['new-admin-pass', 'new-view-pass'].forEach(id => {
+    $(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') $('update-pw-btn').click();
+    });
+  });
+
+  async function init() {
+    await Promise.all([loadPasswords(), loadContent()]);
+    applyTheme(state.content.theme);
+    $('loading').classList.add('hidden');
+    $('lock-screen').classList.remove('hidden');
+    $('password-input').focus();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
