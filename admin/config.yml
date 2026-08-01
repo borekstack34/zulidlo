@@ -2,8 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "images/uploads"   # Složka pro nahrané obrázky
-public_folder: "/images/uploads" # Cesta, pod kterou budou dostupné na webu
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
 
 collections:
   - name: "obsah"
