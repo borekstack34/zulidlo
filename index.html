@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  /* Styly zůstávají stejné jako v předchozí verzi, jen pár drobností pro admin */
   :root {
     --bg-1: #3D2A5C;
     --bg-2: #1B1129;
@@ -23,8 +22,10 @@
     --serif: 'Fraunces', Georgia, serif;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
+
   * { box-sizing: border-box; }
   html, body { height: 100%; overflow-x: hidden; }
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -36,8 +37,11 @@
     justify-content: center;
     padding: 24px;
   }
+
   .hidden { display: none !important; }
+
   #loading { color: #d9cce9; font-size: 0.9rem; letter-spacing: 0.02em; }
+
   /* Lock screen */
   #lock-screen {
     background: var(--paper);
@@ -50,6 +54,7 @@
     text-align: center;
     animation: rise 0.5s ease both;
   }
+
   input[type="password"], input[type="text"], textarea {
     width: 100%;
     padding: 13px 15px;
@@ -61,12 +66,15 @@
     font-family: var(--sans);
     overflow-wrap: break-word;
   }
+
   textarea { line-height: 1.6; resize: vertical; min-height: 160px; overflow-wrap: break-word; word-break: break-word; }
+
   input:focus, textarea:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(124,77,166,0.16);
   }
+
   button {
     font-family: var(--sans);
     cursor: pointer;
@@ -80,9 +88,11 @@
   button:disabled { opacity: 0.55; cursor: default; }
   button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   button:focus:not(:focus-visible) { outline: none; }
+
   .btn-primary { background: var(--accent); color: #FFFFFF; width: 100%; margin-top: 16px; }
   .btn-primary:hover:not(:disabled) { background: var(--accent-deep); }
   .btn-inline { width: auto; margin-top: 0; }
+
   .btn-ghost {
     background: transparent;
     color: var(--ink-soft);
@@ -91,9 +101,12 @@
     font-size: 0.8rem;
   }
   .btn-ghost:hover { border-color: var(--accent) !important; color: var(--accent-deep); }
+
   #error-msg { color: var(--danger); font-size: 0.85rem; margin: 16px 0 0; }
+
   /* Main page */
   #main-wrap { width: 100%; max-width: 1080px; min-width: 0; animation: rise 0.5s ease both; }
+
   #page {
     background: var(--paper);
     border-radius: var(--radius);
@@ -108,11 +121,14 @@
     row-gap: 10px;
     align-items: start;
   }
+
   @keyframes rise {
     from { opacity: 0; transform: translateY(10px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
+
   .topbar { grid-area: top; display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 14px; }
+
   .pill {
     font-size: 0.72rem;
     padding: 5px 12px;
@@ -123,7 +139,9 @@
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
+
   #text-column { grid-area: center; min-width: 0; }
+
   #site-title {
     font-family: var(--serif);
     font-weight: 600;
@@ -140,6 +158,7 @@
     overflow-wrap: break-word;
   }
   #site-title[readonly] { cursor: default; }
+
   #site-text {
     font-size: 1.04rem;
     line-height: 1.75;
@@ -149,7 +168,9 @@
     word-break: break-word;
     margin-bottom: 8px;
   }
+
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
+
   /* Photo bars */
   .photo-bar {
     min-width: 0;
@@ -161,6 +182,7 @@
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
+
   .polaroid {
     --rot: 0deg;
     --shift: 0px;
@@ -179,8 +201,10 @@
     transform: rotate(var(--rot)) translateX(var(--shift)) scale(1.07);
     z-index: 5;
   }
+
   .polaroid .photo-inner { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--paper-deep); }
   .polaroid img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+
   /* Lightbox */
   #lightbox {
     position: fixed; inset: 0;
@@ -189,6 +213,7 @@
     z-index: 100; padding: 30px; cursor: zoom-out;
   }
   #lightbox img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
   @media (max-width: 900px) {
     #page {
       grid-template-columns: 1fr;
@@ -200,6 +225,7 @@
     .photo-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 18px; }
     .topbar { flex-wrap: wrap; row-gap: 8px; }
   }
+
   @media (max-width: 600px) {
     body { padding: 12px; }
     #page { padding: 26px 16px; }
@@ -210,12 +236,14 @@
     .polaroid { width: 96px; padding: 6px 6px 26px; }
     .polaroid.big { width: 118px; }
   }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
       transition-duration: 0.001ms !important;
     }
   }
+
   /* Admin controls */
   #admin-controls {
     margin-top: 30px;
@@ -232,31 +260,38 @@
 </style>
 </head>
 <body>
+
 <div id="loading">Načítám…</div>
+
 <div id="lock-screen" class="hidden">
   <input type="password" id="password-input" placeholder="Heslo" autocomplete="current-password">
   <button class="btn-primary" id="unlock-btn">Vstoupit</button>
   <p id="error-msg" class="hidden"></p>
 </div>
+
 <div id="main-wrap" class="hidden">
   <div id="page">
     <div class="topbar">
       <span id="role-badge" class="pill hidden">Správce</span>
       <button class="btn-ghost" id="logout-btn">Odhlásit</button>
     </div>
+
     <div class="photo-bar" id="photo-bar-left"></div>
+
     <div id="text-column">
       <input id="site-title" type="text" readonly>
       <div id="site-text"></div>
       <textarea id="edit-text" class="hidden" placeholder="Sem napište text stránky…"></textarea>
       <p id="empty-note" class="hidden">Zatím tu nic není.</p>
+
       <div id="admin-controls" class="hidden">
         <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
         <div id="save-row">
-          <button class="btn-primary btn-inline" id="save-btn">Uložit změny</button>
-          <button class="btn-ghost" id="add-photo-btn">Přidat fotku</button>
+          <button class="btn-primary btn-inline" id="save-btn">Vygenerovat content.json</button>
+          <button class="btn-ghost" id="add-photo-btn">Přidat fotku (jen dočasně)</button>
           <span id="save-status"></span>
         </div>
+
         <details>
           <summary>Změnit hesla</summary>
           <div class="pw-row">
@@ -264,35 +299,41 @@
             <input type="password" id="new-view-pass" placeholder="Nové heslo pro prohlížení" autocomplete="new-password">
           </div>
           <div class="pw-row">
-            <button class="btn-ghost" id="update-pw-btn">Uložit nová hesla</button>
+            <button class="btn-ghost" id="update-pw-btn">Vygenerovat passwords.json</button>
             <span id="pw-status"></span>
           </div>
         </details>
       </div>
     </div>
+
     <div class="photo-bar" id="photo-bar-right"></div>
   </div>
 </div>
+
 <div id="lightbox" class="hidden">
   <img id="lightbox-img" src="" alt="">
 </div>
+
 <script>
 (function() {
   const SALT = 'ministranka-salt-9f2';
   const MAX_DIM = 1600;
   const JPEG_QUALITY = 0.8;
-  const SIZE_WARNING_BYTES = 4.3 * 1024 * 1024;
+
   let state = {
     role: null,
     passwords: null,
     content: { title: '', text: '', photos: [] }
   };
+
   const $ = (id) => document.getElementById(id);
+
   async function sha256(text) {
     const enc = new TextEncoder().encode(text + SALT);
     const buf = await crypto.subtle.digest('SHA-256', enc);
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
+
   async function loadPasswords() {
     try {
       const res = await fetch('passwords.json');
@@ -300,19 +341,21 @@
       state.passwords = await res.json();
     } catch (e) {
       console.error('Chyba načítání hesel:', e);
+      // Záloha – nefunkční, ale vyžádá si opravu
       state.passwords = {
         adminHash: '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
         viewHash: '5c2e3b0d1a6e8f7b9c0d4e6f8a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9'
       };
     }
   }
+
   async function loadContent() {
     try {
       const res = await fetch('content.json');
       if (!res.ok) throw new Error('Nelze načíst obsah');
       const data = await res.json();
       state.content = Object.assign({ title: '', text: '', photos: [] }, data);
-      // Převedeme pole objektů na pole řetězců (pro zpětnou kompatibilitu)
+      // Převede pole objektů na pole řetězců (pro zpětnou kompatibilitu)
       state.content.photos = state.content.photos.map(item => {
         if (typeof item === 'string') return item;
         if (item && item.photo) return item.photo;
@@ -323,14 +366,17 @@
       state.content = { title: 'Vítejte', text: '', photos: [] };
     }
   }
+
   function openLightbox(src) {
     $('lightbox-img').src = src;
     $('lightbox').classList.remove('hidden');
   }
+
   $('lightbox').addEventListener('click', () => $('lightbox').classList.add('hidden'));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') $('lightbox').classList.add('hidden');
   });
+
   function hashStr(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -338,6 +384,7 @@
     }
     return Math.abs(h);
   }
+
   function photoStyle(url) {
     const rotHash = hashStr(url + 'r');
     const sign = (rotHash % 2 === 0) ? 1 : -1;
@@ -347,11 +394,13 @@
     const big = (hashStr(url + 'z') % 2) === 0;
     return { rot, shift, big };
   }
+
   function renderPhotos() {
     const leftBar = $('photo-bar-left');
     const rightBar = $('photo-bar-right');
     leftBar.innerHTML = '';
     rightBar.innerHTML = '';
+
     state.content.photos.forEach((url, index) => {
       if (!url) return;
       const style = photoStyle(url);
@@ -359,6 +408,7 @@
       item.className = 'polaroid' + (style.big ? ' big' : '');
       item.style.setProperty('--rot', style.rot.toFixed(2) + 'deg');
       item.style.setProperty('--shift', style.shift.toFixed(1) + 'px');
+
       const inner = document.createElement('div');
       inner.className = 'photo-inner';
       const img = document.createElement('img');
@@ -367,19 +417,23 @@
       img.addEventListener('click', () => openLightbox(url));
       inner.appendChild(img);
       item.appendChild(inner);
+
       const targetBar = index % 2 === 0 ? leftBar : rightBar;
       targetBar.appendChild(item);
     });
+
     const noPhotos = state.content.photos.length === 0;
     const noText = !state.content.text || !state.content.text.trim();
     $('empty-note').classList.toggle('hidden', !(noPhotos && noText));
   }
+
   function renderContent() {
     $('site-title').value = state.content.title || '';
     $('site-text').textContent = state.content.text || '';
     $('edit-text').value = state.content.text || '';
     renderPhotos();
   }
+
   async function resizeAndCompress(file) {
     const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
     let { width, height } = bitmap;
@@ -400,71 +454,97 @@
     bitmap.close();
     return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
   }
-  // Admin funkce – uložení obsahu přes Git Gateway
-  async function saveContent() {
-    const status = $('save-status');
-    const btn = $('save-btn');
+
+  // Generování content.json
+  function generateContentJSON() {
     state.content.title = $('site-title').value;
     state.content.text = $('edit-text').value;
-    const json = JSON.stringify(state.content);
-    if (json.length > SIZE_WARNING_BYTES) {
-      status.textContent = 'Moc dat na uložení — smažte prosím pár fotek.';
+
+    const json = JSON.stringify(state.content, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'content.json';
+    a.textContent = 'Klikni pro stažení content.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    $('save-status').textContent = 'Soubor stažen. Nahraj ho do repozitáře na GitHubu.';
+    $('save-status').style.color = 'var(--ink-soft)';
+    setTimeout(() => { $('save-status').textContent = ''; }, 5000);
+  }
+
+  // Generování passwords.json
+  async function generatePasswordsJSON() {
+    const newAdmin = $('new-admin-pass').value;
+    const newView = $('new-view-pass').value;
+    const status = $('pw-status');
+
+    if (!newAdmin && !newView) {
+      status.textContent = 'Vyplňte alespoň jedno heslo.';
       status.style.color = 'var(--danger)';
       return;
     }
-    btn.disabled = true;
-    status.textContent = 'Ukládám…';
+
+    const passwords = {};
+    if (newAdmin) passwords.adminHash = await sha256(newAdmin);
+    else passwords.adminHash = state.passwords.adminHash;
+    if (newView) passwords.viewHash = await sha256(newView);
+    else passwords.viewHash = state.passwords.viewHash;
+
+    const json = JSON.stringify(passwords, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'passwords.json';
+    a.textContent = 'Klikni pro stažení passwords.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    status.textContent = 'Soubor stažen. Nahraj ho do repozitáře na GitHubu.';
     status.style.color = 'var(--ink-soft)';
-    try {
-      // Použijeme Git Gateway API z Netlify (vyžaduje přihlášeného uživatele)
-      const user = netlifyIdentity.currentUser();
-      if (!user) throw new Error('Nejste přihlášen/a');
-      const token = await user.jwt();
-      const response = await fetch('/.netlify/git/github/contents/content.json', {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Aktualizace obsahu',
-          content: btoa(unescape(encodeURIComponent(json))),
-          branch: 'main'
-        })
-      });
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      status.textContent = 'Uloženo ✓';
-      $('site-text').textContent = state.content.text;
-      setTimeout(() => { status.textContent = ''; }, 3000);
-    } catch (err) {
-      status.textContent = 'Uložení se nezdařilo. Zkuste to prosím znovu.';
-      status.style.color = 'var(--danger)';
-      console.error(err);
-    } finally {
-      btn.disabled = false;
+    $('new-admin-pass').value = '';
+    $('new-view-pass').value = '';
+    setTimeout(() => { status.textContent = ''; }, 5000);
+  }
+
+  // Admin – přidání fotek (pouze dočasné, pro ukázku)
+  $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
+  $('photo-upload').addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    for (const file of files) {
+      try {
+        const dataUrl = await resizeAndCompress(file);
+        state.content.photos.push(dataUrl);
+        alert('Fotka přidána jako data URL (dočasně). Pro publikaci ji musíš uložit jako soubor do složky images/uploads/ a do content.json vložit cestu.');
+      } catch (err) {
+        console.error('Zpracování fotky selhalo', err);
+      }
     }
-  }
-  // Inicializace Netlify Identity (pro admin ukládání)
-  let netlifyIdentity;
-  if (window.netlifyIdentity) {
-    netlifyIdentity = window.netlifyIdentity;
-    netlifyIdentity.init();
-  } else {
-    console.warn('Netlify Identity widget není načten. Admin ukládání nebude fungovat.');
-  }
+    e.target.value = '';
+    renderPhotos();
+  });
+
   async function enterMain() {
     await loadPasswords();
     await loadContent();
     renderContent();
+
     $('lock-screen').classList.add('hidden');
     $('main-wrap').classList.remove('hidden');
+
     if (state.role === 'admin') {
       $('role-badge').classList.remove('hidden');
       $('site-title').removeAttribute('readonly');
       $('site-text').classList.add('hidden');
       $('edit-text').classList.remove('hidden');
       $('admin-controls').classList.remove('hidden');
-      $('site-title').focus();
     } else {
       $('role-badge').classList.add('hidden');
       $('site-title').setAttribute('readonly', 'true');
@@ -473,13 +553,16 @@
       $('admin-controls').classList.add('hidden');
     }
   }
+
   $('unlock-btn').addEventListener('click', async () => {
     const pass = $('password-input').value;
     if (!pass) return;
     $('unlock-btn').disabled = true;
     const hash = await sha256(pass);
     $('unlock-btn').disabled = false;
+
     if (!state.passwords) await loadPasswords();
+
     if (hash === state.passwords.adminHash) {
       state.role = 'admin';
       enterMain();
@@ -492,9 +575,11 @@
       el.classList.remove('hidden');
     }
   });
+
   $('password-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') $('unlock-btn').click();
   });
+
   $('logout-btn').addEventListener('click', () => {
     state.role = null;
     $('main-wrap').classList.add('hidden');
@@ -503,82 +588,17 @@
     $('password-input').focus();
     $('error-msg').classList.add('hidden');
   });
-  $('save-btn').addEventListener('click', saveContent);
-  $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
-  $('photo-upload').addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files);
-    for (const file of files) {
-      try {
-        const dataUrl = await resizeAndCompress(file);
-        state.content.photos.push(dataUrl);
-      } catch (err) {
-        console.error('Zpracování fotky selhalo', err);
-      }
-    }
-    e.target.value = '';
-    renderPhotos();
-  });
-  $('update-pw-btn').addEventListener('click', async () => {
-    const newAdmin = $('new-admin-pass').value;
-    const newView = $('new-view-pass').value;
-    const status = $('pw-status');
-    if (!newAdmin && !newView) {
-      status.textContent = 'Vyplňte alespoň jedno heslo.';
-      status.style.color = 'var(--danger)';
-      return;
-    }
-    try {
-      if (newAdmin) state.passwords.adminHash = await sha256(newAdmin);
-      if (newView) state.passwords.viewHash = await sha256(newView);
-      const user = netlifyIdentity.currentUser();
-      if (!user) throw new Error('Nejste přihlášen/a');
-      const token = await user.jwt();
-      const response = await fetch('/.netlify/git/github/contents/passwords.json', {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Aktualizace hesel',
-          content: btoa(unescape(encodeURIComponent(JSON.stringify(state.passwords)))),
-          branch: 'main'
-        })
-      });
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      status.textContent = 'Nová hesla uložena ✓';
-      status.style.color = 'var(--ink-soft)';
-      $('new-admin-pass').value = '';
-      $('new-view-pass').value = '';
-    } catch (err) {
-      status.textContent = 'Uložení hesel se nezdařilo.';
-      status.style.color = 'var(--danger)';
-      console.error(err);
-    }
-  });
+
+  $('save-btn').addEventListener('click', generateContentJSON);
+  $('update-pw-btn').addEventListener('click', generatePasswordsJSON);
+
+  // Start
   async function init() {
-    // Abychom mohli používat Git Gateway, potřebujeme Netlify Identity widget
-    if (!window.netlifyIdentity) {
-      // Dynamicky načteme skript
-      const script = document.createElement('script');
-      script.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js';
-      script.onload = () => {
-        netlifyIdentity = window.netlifyIdentity;
-        netlifyIdentity.init();
-        // Pokračujeme v inicializaci
-        $('loading').classList.add('hidden');
-        $('lock-screen').classList.remove('hidden');
-        $('password-input').focus();
-      };
-      document.head.appendChild(script);
-    } else {
-      netlifyIdentity = window.netlifyIdentity;
-      netlifyIdentity.init();
-      $('loading').classList.add('hidden');
-      $('lock-screen').classList.remove('hidden');
-      $('password-input').focus();
-    }
+    $('loading').classList.add('hidden');
+    $('lock-screen').classList.remove('hidden');
+    $('password-input').focus();
   }
+
   init();
 })();
 </script>
