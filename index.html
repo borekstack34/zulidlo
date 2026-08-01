@@ -1,3 +1,4 @@
+<!-- Finální index.html pro Netlify CMS verzi -->
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -157,9 +158,7 @@
     border-radius: 8px;
     overflow-wrap: break-word;
   }
-  #site-title:focus { background: #FDFBFE; }
   #site-title[readonly] { cursor: default; }
-  #site-title[readonly]:focus { border-color: transparent; box-shadow: none; background: transparent; }
 
   #site-text {
     font-size: 1.04rem;
@@ -172,28 +171,6 @@
   }
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
-
-  #admin-controls { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--paper-deep); }
-
-  #save-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  #save-status, #pw-status { font-size: 0.85rem; color: var(--ink-soft); }
-
-  details { margin-top: 22px; font-size: 0.9rem; }
-  details summary { cursor: pointer; color: var(--ink-soft); font-weight: 600; }
-  details summary:hover { color: var(--accent-deep); }
-
-  .pw-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-  .pw-row input { flex: 1; min-width: 170px; }
-
-  .theme-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-  .theme-swatch {
-    width: 34px; height: 34px; border-radius: 50%;
-    border: none; padding: 0; cursor: pointer;
-    color: #fff; font-size: 15px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  }
-  .theme-swatch.active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 0 2px 6px rgba(0,0,0,0.25); }
 
   /* Photo bars */
   .photo-bar {
@@ -229,47 +206,6 @@
   .polaroid .photo-inner { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--paper-deep); }
   .polaroid img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
 
-  .photo-delete {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--danger);
-    color: white;
-    font-size: 15px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    transform: rotate(calc(-1 * var(--rot)));
-  }
-
-  .polaroid-controls {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 3px;
-    display: flex;
-    justify-content: center;
-    gap: 2px;
-    transform: rotate(calc(-1 * var(--rot)));
-  }
-  .pc-btn {
-    background: transparent;
-    border: none;
-    color: var(--ink-soft);
-    font-size: 11px;
-    padding: 3px 6px;
-    border-radius: 6px;
-    line-height: 1;
-  }
-  .pc-btn:hover { background: var(--paper-deep); color: var(--accent-deep); }
-  .pc-btn:active { transform: scale(0.9); }
-
   /* Lightbox */
   #lightbox {
     position: fixed; inset: 0;
@@ -291,27 +227,15 @@
     .topbar { flex-wrap: wrap; row-gap: 8px; }
   }
 
-  /* Phone-sized screens: tighter spacing, smaller polaroids, bigger tap targets */
   @media (max-width: 600px) {
     body { padding: 12px; }
     #page { padding: 26px 16px; }
     #lock-screen { padding: 38px 20px 30px; max-width: 100%; }
     #site-title { font-size: 1.55rem; margin-left: -6px; width: calc(100% + 12px); padding: 4px 6px; }
-    #site-text, textarea#edit-text { font-size: 1rem; }
-
+    #site-text { font-size: 1rem; }
     .photo-bar { gap: 16px; }
     .polaroid { width: 96px; padding: 6px 6px 26px; }
     .polaroid.big { width: 118px; }
-    .photo-delete { width: 30px; height: 30px; font-size: 17px; top: -10px; right: -10px; }
-    .pc-btn { font-size: 13px; padding: 4px 6px; }
-
-    #save-row { flex-direction: column; align-items: stretch; gap: 10px; }
-    .btn-inline { width: 100%; }
-
-    .pw-row { flex-direction: column; }
-    .pw-row input { min-width: 0; width: 100%; }
-
-    details summary { padding: 6px 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -335,43 +259,17 @@
 <div id="main-wrap" class="hidden">
   <div id="page">
     <div class="topbar">
-      <span id="role-badge" class="pill hidden">Režim správce</span>
+      <span id="role-badge" class="pill hidden">Správce</span>
+      <a href="/admin" id="admin-link" class="btn-ghost hidden" target="_blank">Upravit obsah</a>
       <button class="btn-ghost" id="logout-btn">Odhlásit</button>
     </div>
 
     <div class="photo-bar" id="photo-bar-left"></div>
 
     <div id="text-column">
-      <input id="site-title" type="text" readonly>
+      <div id="site-title"></div>
       <div id="site-text"></div>
-      <textarea id="edit-text" class="hidden" placeholder="Sem napište text stránky…"></textarea>
       <p id="empty-note" class="hidden">Zatím tu nic není.</p>
-
-      <div id="admin-controls" class="hidden">
-        <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
-        <div id="save-row">
-          <button class="btn-primary btn-inline" id="save-btn">Uložit změny</button>
-          <button class="btn-ghost" id="add-photo-btn">Přidat fotku</button>
-          <span id="save-status"></span>
-        </div>
-
-        <details>
-          <summary>Změnit hesla</summary>
-          <div class="pw-row">
-            <input type="password" id="new-admin-pass" placeholder="Nové heslo správce" autocomplete="new-password">
-            <input type="password" id="new-view-pass" placeholder="Nové heslo pro prohlížení" autocomplete="new-password">
-          </div>
-          <div class="pw-row">
-            <button class="btn-ghost" id="update-pw-btn">Uložit nová hesla</button>
-            <span id="pw-status"></span>
-          </div>
-        </details>
-
-        <details>
-          <summary>Změnit barvy</summary>
-          <div class="theme-row" id="theme-row"></div>
-        </details>
-      </div>
     </div>
 
     <div class="photo-bar" id="photo-bar-right"></div>
@@ -384,30 +282,14 @@
 
 <script>
 (function() {
-  if (!window.storage) {
-    window.storage = {
-      get: async (key) => {
-        const item = localStorage.getItem(key);
-        if (item === null) throw new Error('not found');
-        return { value: item };
-      },
-      set: async (key, value) => {
-        localStorage.setItem(key, value);
-      }
-    };
-  }
-
   const SALT = 'ministranka-salt-9f2';
-  const DEFAULT_ADMIN_PASS = 'A2';
-  const DEFAULT_VIEW_PASS = 'A3';
-  const MAX_DIM = 1600;
-  const JPEG_QUALITY = 0.8;
-  const SIZE_WARNING_BYTES = 4.3 * 1024 * 1024;
+  // ZMĚŇTE SI HESLA ZDE (doporučuji silnější):
+  const DEFAULT_ADMIN_PASS = 'zmente-heslo-1';
+  const DEFAULT_VIEW_PASS = 'zmente-heslo-2';
 
   let state = {
     role: null,
-    passwords: null,
-    content: { title: 'Milé Žulidlo,', text: '', photos: [], theme: 'purple' }
+    content: { title: '', text: '', photos: [] }
   };
 
   const $ = (id) => document.getElementById(id);
@@ -418,36 +300,16 @@
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  async function loadPasswords() {
-    try {
-      const res = await window.storage.get('site-passwords', true);
-      state.passwords = JSON.parse(res.value);
-    } catch (e) {
-      state.passwords = {
-        adminHash: await sha256(DEFAULT_ADMIN_PASS),
-        viewHash: await sha256(DEFAULT_VIEW_PASS)
-      };
-    }
-  }
-
   async function loadContent() {
     try {
-      const res = await window.storage.get('site-content', true);
-      const parsed = JSON.parse(res.value);
-      state.content = Object.assign({ title: '', text: '', photos: [], theme: 'purple' }, parsed);
+      const res = await fetch('content.json');
+      if (!res.ok) throw new Error('Not found');
+      const data = await res.json();
+      state.content = Object.assign({ title: '', text: '', photos: [] }, data);
     } catch (e) {
+      // Při chybě zůstanou prázdné hodnoty
+      state.content = { title: 'Vítejte', text: '', photos: [] };
     }
-    state.content.photos.forEach((p) => {
-      if (p.side !== 'left' && p.side !== 'right') {
-        p.side = (hashStr(p.id + 'd') % 2 === 0) ? 'left' : 'right';
-      }
-    });
-  }
-
-  function showError(msg) {
-    const el = $('error-msg');
-    el.textContent = msg;
-    el.classList.remove('hidden');
   }
 
   function openLightbox(src) {
@@ -460,13 +322,6 @@
     if (e.key === 'Escape') $('lightbox').classList.add('hidden');
   });
 
-  function updateEmptyNote() {
-    const noPhotos = state.content.photos.length === 0;
-    const noText = !state.content.text || !state.content.text.trim();
-    const showEmpty = state.role !== 'admin' && noPhotos && noText;
-    $('empty-note').classList.toggle('hidden', !showEmpty);
-  }
-
   function hashStr(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -475,7 +330,8 @@
     return Math.abs(h);
   }
 
-  function photoStyle(id) {
+  function photoStyle(url) {
+    const id = url; // použijeme URL jako zdroj entropie
     const rotHash = hashStr(id + 'r');
     const sign = (rotHash % 2 === 0) ? 1 : -1;
     const magnitude = 2 + ((rotHash % 1000) / 1000) * 5;
@@ -485,237 +341,95 @@
     return { rot, shift, big };
   }
 
-  const THEMES = {
-    purple:     { label: 'Fialová',       bg1: '#3D2A5C', bg2: '#1B1129', paper: '#FAF7FC', paperDeep: '#E2D4F0', ink: '#2A2138', inkSoft: '#7B7089', accent: '#7C4DA6', accentDeep: '#5C3980', danger: '#A34A72' },
-    emerald:    { label: 'Smaragdová',    bg1: '#1F4A3D', bg2: '#0E2620', paper: '#F6F8F3', paperDeep: '#DCE8D8', ink: '#1E2B24', inkSoft: '#6E7C71', accent: '#2F8F63', accentDeep: '#226B49', danger: '#B25444' },
-    midnight:   { label: 'Půlnoční modrá', bg1: '#223A5E', bg2: '#0F1B2E', paper: '#F5F7FA', paperDeep: '#D9E2EC', ink: '#1E2733', inkSoft: '#6B7686', accent: '#3B6EA5', accentDeep: '#2C517D', danger: '#B25757' },
-    terracotta: { label: 'Terakota',      bg1: '#5C3A2A', bg2: '#2B1810', paper: '#FBF3E9', paperDeep: '#EAD9C2', ink: '#3A2A1E', inkSoft: '#8A7259', accent: '#B4623E', accentDeep: '#8F4B2E', danger: '#A3454A' },
-    rose:       { label: 'Růžová',        bg1: '#5C2A44', bg2: '#2B0F1F', paper: '#FDF5F7', paperDeep: '#EFD7E0', ink: '#3A1E2A', inkSoft: '#8A6E78', accent: '#B14A72', accentDeep: '#8C3759', danger: '#A34A4A' }
-  };
-
-  function applyTheme(key) {
-    const t = THEMES[key] || THEMES.purple;
-    const root = document.documentElement.style;
-    root.setProperty('--bg-1', t.bg1);
-    root.setProperty('--bg-2', t.bg2);
-    root.setProperty('--paper', t.paper);
-    root.setProperty('--paper-deep', t.paperDeep);
-    root.setProperty('--ink', t.ink);
-    root.setProperty('--ink-soft', t.inkSoft);
-    root.setProperty('--accent', t.accent);
-    root.setProperty('--accent-deep', t.accentDeep);
-    root.setProperty('--danger', t.danger);
-  }
-
-  function renderThemeSwatches() {
-    const row = $('theme-row');
-    if (!row) return;
-    row.innerHTML = '';
-    const active = state.content.theme || 'purple';
-    Object.keys(THEMES).forEach((key) => {
-      const t = THEMES[key];
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'theme-swatch' + (key === active ? ' active' : '');
-      btn.style.background = t.accent;
-      btn.title = t.label;
-      btn.setAttribute('aria-label', t.label);
-      btn.textContent = key === active ? '✓' : '';
-      btn.addEventListener('click', () => {
-        state.content.theme = key;
-        applyTheme(key);
-        renderThemeSwatches();
-      });
-      row.appendChild(btn);
-    });
-  }
-
-  function moveWithinSide(photoId, direction) {
-    const arr = state.content.photos;
-    const idx = arr.findIndex(p => p.id === photoId);
-    if (idx === -1) return;
-    const side = arr[idx].side;
-    let swapIdx = -1;
-    if (direction === 'up') {
-      for (let i = idx - 1; i >= 0; i--) {
-        if (arr[i].side === side) { swapIdx = i; break; }
-      }
-    } else {
-      for (let i = idx + 1; i < arr.length; i++) {
-        if (arr[i].side === side) { swapIdx = i; break; }
-      }
-    }
-    if (swapIdx === -1) return;
-    [arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]];
-    renderPhotos();
-  }
-
-  function swapSide(photoId) {
-    const photo = state.content.photos.find(p => p.id === photoId);
-    if (!photo) return;
-    photo.side = photo.side === 'left' ? 'right' : 'left';
-    renderPhotos();
-  }
-
-  function buildPolaroid(photo) {
-    const style = photoStyle(photo.id);
-
-    const item = document.createElement('div');
-    item.className = 'polaroid' + (style.big ? ' big' : '');
-    item.style.setProperty('--rot', style.rot.toFixed(2) + 'deg');
-    item.style.setProperty('--shift', style.shift.toFixed(1) + 'px');
-
-    const inner = document.createElement('div');
-    inner.className = 'photo-inner';
-    const img = document.createElement('img');
-    img.src = photo.dataUrl;
-    img.alt = 'fotka';
-    img.addEventListener('click', () => openLightbox(photo.dataUrl));
-    inner.appendChild(img);
-    item.appendChild(inner);
-
-    if (state.role === 'admin') {
-      const del = document.createElement('button');
-      del.type = 'button';
-      del.className = 'photo-delete';
-      del.innerHTML = '&times;';
-      del.setAttribute('aria-label', 'Smazat fotku');
-      del.addEventListener('click', (ev) => {
-        ev.stopPropagation();
-        if (confirm('Opravdu smazat tuto fotku?')) {
-          state.content.photos = state.content.photos.filter(p => p.id !== photo.id);
-          renderPhotos();
-        }
-      });
-      item.appendChild(del);
-
-      const controls = document.createElement('div');
-      controls.className = 'polaroid-controls';
-
-      const upBtn = document.createElement('button');
-      upBtn.type = 'button';
-      upBtn.className = 'pc-btn';
-      upBtn.innerHTML = '&#9650;';
-      upBtn.setAttribute('aria-label', 'Posunout nahoru');
-      upBtn.addEventListener('click', (ev) => { ev.stopPropagation(); moveWithinSide(photo.id, 'up'); });
-
-      const swapBtn = document.createElement('button');
-      swapBtn.type = 'button';
-      swapBtn.className = 'pc-btn';
-      swapBtn.innerHTML = '&#8646;';
-      swapBtn.setAttribute('aria-label', 'Přesunout na druhou stranu');
-      swapBtn.addEventListener('click', (ev) => { ev.stopPropagation(); swapSide(photo.id); });
-
-      const downBtn = document.createElement('button');
-      downBtn.type = 'button';
-      downBtn.className = 'pc-btn';
-      downBtn.innerHTML = '&#9660;';
-      downBtn.setAttribute('aria-label', 'Posunout dolů');
-      downBtn.addEventListener('click', (ev) => { ev.stopPropagation(); moveWithinSide(photo.id, 'down'); });
-
-      controls.appendChild(upBtn);
-      controls.appendChild(swapBtn);
-      controls.appendChild(downBtn);
-      item.appendChild(controls);
-    }
-
-    return item;
-  }
-
   function renderPhotos() {
     const leftBar = $('photo-bar-left');
     const rightBar = $('photo-bar-right');
     leftBar.innerHTML = '';
     rightBar.innerHTML = '';
 
-    state.content.photos.forEach((photo) => {
-      const el = buildPolaroid(photo);
-      (photo.side === 'left' ? leftBar : rightBar).appendChild(el);
+    const photos = state.content.photos || [];
+    photos.forEach((url, index) => {
+      if (!url) return;
+      const style = photoStyle(url);
+      const item = document.createElement('div');
+      item.className = 'polaroid' + (style.big ? ' big' : '');
+      item.style.setProperty('--rot', style.rot.toFixed(2) + 'deg');
+      item.style.setProperty('--shift', style.shift.toFixed(1) + 'px');
+
+      const inner = document.createElement('div');
+      inner.className = 'photo-inner';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = 'fotka';
+      img.addEventListener('click', () => openLightbox(url));
+      inner.appendChild(img);
+      item.appendChild(inner);
+
+      // Rozmístění: první na levou, další na pravou, atd.
+      const targetBar = index % 2 === 0 ? leftBar : rightBar;
+      targetBar.appendChild(item);
     });
 
-    updateEmptyNote();
+    // Zobrazit nebo skrýt poznámku o prázdnotě (pro prohlížeče)
+    const noPhotos = photos.length === 0;
+    const noText = !state.content.text || !state.content.text.trim();
+    $('empty-note').classList.toggle('hidden', !(noPhotos && noText));
   }
 
-  async function resizeAndCompress(file) {
-    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-    let { width, height } = bitmap;
-    if (width > MAX_DIM || height > MAX_DIM) {
-      if (width > height) {
-        height = Math.round(height * MAX_DIM / width);
-        width = MAX_DIM;
-      } else {
-        width = Math.round(width * MAX_DIM / height);
-        height = MAX_DIM;
-      }
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(bitmap, 0, 0, width, height);
-    bitmap.close();
-    return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-  }
-
-  $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
-
-  $('photo-upload').addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files);
-    for (const file of files) {
-      try {
-        const dataUrl = await resizeAndCompress(file);
-        const leftCount = state.content.photos.filter(p => p.side === 'left').length;
-        const rightCount = state.content.photos.filter(p => p.side === 'right').length;
-        const side = leftCount <= rightCount ? 'left' : 'right';
-        state.content.photos.push({ id: crypto.randomUUID(), dataUrl, side });
-      } catch (err) {
-        console.error('Zpracování fotky selhalo', err);
-      }
-    }
-    e.target.value = '';
+  function renderContent() {
+    $('site-title').textContent = state.content.title || '';
+    $('site-text').textContent = state.content.text || '';
     renderPhotos();
-  });
+  }
 
-  function enterMain() {
+  async function enterMain() {
+    await loadContent();
+    renderContent();
+
     $('lock-screen').classList.add('hidden');
     $('main-wrap').classList.remove('hidden');
 
-    $('site-title').value = state.content.title || '';
-    $('site-text').textContent = state.content.text || '';
-    $('edit-text').value = state.content.text || '';
-
     if (state.role === 'admin') {
-      $('role-badge').textContent = 'Režim správce';
       $('role-badge').classList.remove('hidden');
-      $('site-title').removeAttribute('readonly');
-      $('site-text').classList.add('hidden');
-      $('edit-text').classList.remove('hidden');
-      $('admin-controls').classList.remove('hidden');
-      renderThemeSwatches();
+      $('admin-link').classList.remove('hidden');
     } else {
       $('role-badge').classList.add('hidden');
-      $('site-title').setAttribute('readonly', 'true');
-      $('site-text').classList.remove('hidden');
-      $('edit-text').classList.add('hidden');
-      $('admin-controls').classList.add('hidden');
+      $('admin-link').classList.add('hidden');
     }
-    renderPhotos();
   }
 
+  // Přihlašovací logika
   $('unlock-btn').addEventListener('click', async () => {
     const pass = $('password-input').value;
     if (!pass) return;
     $('unlock-btn').disabled = true;
     const hash = await sha256(pass);
     $('unlock-btn').disabled = false;
-    if (hash === state.passwords.adminHash) {
+
+    // Hesla načítáme z localStorage, nebo použijeme výchozí
+    let passwords;
+    try {
+      const stored = localStorage.getItem('site-passwords');
+      passwords = stored ? JSON.parse(stored) : null;
+    } catch (e) { passwords = null; }
+
+    if (!passwords) {
+      passwords = {
+        adminHash: await sha256(DEFAULT_ADMIN_PASS),
+        viewHash: await sha256(DEFAULT_VIEW_PASS)
+      };
+    }
+
+    if (hash === passwords.adminHash) {
       state.role = 'admin';
       enterMain();
-    } else if (hash === state.passwords.viewHash) {
+    } else if (hash === passwords.viewHash) {
       state.role = 'viewer';
       enterMain();
     } else {
-      showError('Špatné heslo, zkuste to znovu.');
+      const el = $('error-msg');
+      el.textContent = 'Špatné heslo, zkuste to znovu.';
+      el.classList.remove('hidden');
     }
   });
 
@@ -732,70 +446,9 @@
     $('error-msg').classList.add('hidden');
   });
 
-  $('save-btn').addEventListener('click', async () => {
-    state.content.title = $('site-title').value;
-    state.content.text = $('edit-text').value;
-
-    const json = JSON.stringify(state.content);
-    const status = $('save-status');
-    const btn = $('save-btn');
-
-    if (json.length > SIZE_WARNING_BYTES) {
-      status.textContent = 'Moc dat na uložení — smažte prosím pár fotek.';
-      status.style.color = 'var(--danger)';
-      return;
-    }
-
-    btn.disabled = true;
-    status.textContent = 'Ukládám…';
-    status.style.color = 'var(--ink-soft)';
-    try {
-      await window.storage.set('site-content', json, true);
-      status.textContent = 'Uloženo ✓';
-      $('site-text').textContent = state.content.text;
-    } catch (err) {
-      status.textContent = 'Uložení se nezdařilo. Zkuste to prosím znovu.';
-      status.style.color = 'var(--danger)';
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  $('update-pw-btn').addEventListener('click', async () => {
-    const newAdmin = $('new-admin-pass').value;
-    const newView = $('new-view-pass').value;
-    const status = $('pw-status');
-
-    if (!newAdmin && !newView) {
-      status.textContent = 'Vyplňte alespoň jedno heslo.';
-      status.style.color = 'var(--danger)';
-      return;
-    }
-
-    if (newAdmin) state.passwords.adminHash = await sha256(newAdmin);
-    if (newView) state.passwords.viewHash = await sha256(newView);
-
-    try {
-      await window.storage.set('site-passwords', JSON.stringify(state.passwords), true);
-      status.textContent = 'Nová hesla uložena ✓';
-      status.style.color = 'var(--ink-soft)';
-      $('new-admin-pass').value = '';
-      $('new-view-pass').value = '';
-    } catch (err) {
-      status.textContent = 'Uložení hesel se nezdařilo.';
-      status.style.color = 'var(--danger)';
-    }
-  });
-
-  ['new-admin-pass', 'new-view-pass'].forEach(id => {
-    $(id).addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') $('update-pw-btn').click();
-    });
-  });
-
+  // Inicializace
   async function init() {
-    await Promise.all([loadPasswords(), loadContent()]);
-    applyTheme(state.content.theme);
+    // Zobrazíme zámek
     $('loading').classList.add('hidden');
     $('lock-screen').classList.remove('hidden');
     $('password-input').focus();
