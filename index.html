@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  /* --- Styly zůstávají stejné jako v poslední verzi, jen přidám drobnosti pro token input --- */
   :root {
     --bg-1: #3D2A5C;
     --bg-2: #1B1129;
@@ -296,7 +295,7 @@
   const SALT = 'ministranka-salt-9f2';
   const MAX_DIM = 1600;
   const JPEG_QUALITY = 0.8;
-  const REPO = 'borekstack34/zulidlo'; // Uprav, pokud máš jiné uživatelské jméno
+  const REPO = 'borekstack34/zulidlo';
   const BRANCH = 'main';
 
   let state = {
@@ -308,7 +307,7 @@
 
   const $ = (id) => document.getElementById(id);
 
-  // ------------------- Utility -------------------
+
   async function sha256(text) {
     const enc = new TextEncoder().encode(text + SALT);
     const buf = await crypto.subtle.digest('SHA-256', enc);
