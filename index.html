@@ -252,10 +252,10 @@
       <p id="empty-note" class="hidden">Zatím tu nic není.</p>
 
       <div id="admin-controls" class="hidden">
-        <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
+        <input type="file" id="photo-upload" accept="image/*" class="hidden">
         <div id="save-row">
           <button class="btn-primary btn-inline" id="save-btn">Uložit změny</button>
-          <button class="btn-ghost" id="add-photo-btn">Přidat fotku (zatím ručně)</button>
+          <button class="btn-ghost" id="add-photo-btn">Přidat fotku</button>
           <span id="save-status"></span>
         </div>
 
@@ -307,7 +307,7 @@
 
   const $ = (id) => document.getElementById(id);
 
-
+  // ------------------- Utility -------------------
   async function sha256(text) {
     const enc = new TextEncoder().encode(text + SALT);
     const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -355,20 +355,12 @@
     $('token-status').style.color = 'var(--ink-soft)';
   }
 
-  function clearToken() {
-    localStorage.removeItem('github_token');
-    state.githubToken = null;
-    $('github-token').value = '';
-    $('token-status').textContent = 'Token vymazán.';
-  }
-
   // ------------------- GitHub API save -------------------
   async function saveToGitHub(path, content, message) {
     const token = state.githubToken || getToken();
     if (!token) throw new Error('Chybí GitHub token. Nastav ho v administraci.');
 
     const apiUrl = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
-    // Získání aktuální SHA souboru
     let sha = null;
     try {
       const getRes = await fetch(apiUrl, {
@@ -538,7 +530,7 @@
     const json = JSON.stringify(passwords, null, 2);
     try {
       await saveToGitHub('passwords.json', json, 'Aktualizace hesel');
-      state.passwords = passwords; // aktualizuj lokálně
+      state.passwords = passwords;
       status.textContent = 'Hesla uložena ✓';
       status.style.color = 'var(--ink-soft)';
       $('new-admin-pass').value = '';
@@ -550,24 +542,68 @@
     setTimeout(() => { status.textContent = ''; }, 4000);
   }
 
+  // ------------------- Nahrávání fotek -------------------
+  async function uploadPhoto(file) {
+    const token = state.githubToken || getToken();
+    if (!token) throw new Error('Chybí GitHub token.');
+
+    // Vygenerujeme náhodný název
+    const ext = file.name.split('.').pop() || 'jpg';
+    const randName = crypto.randomUUID() + '.' + ext;
+    const path = `images/uploads/${randName}`;
+
+    // Zkomprimujeme a převedeme na base64
+    const dataUrl = await resizeAndCompress(file);
+    const base64Content = dataUrl.split(',')[1]; // jen data část
+
+    const apiUrl = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+    const body = {
+      message: 'Nahrání fotky ' + randName,
+      content: base64Content,
+      branch: BRANCH
+    };
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || 'Nahrání selhalo');
+    }
+
+    // Vrátíme veřejnou URL
+    return `/${path}`;
+  }
+
   // ------------------- Event handlers -------------------
   $('save-btn').addEventListener('click', saveContent);
   $('update-pw-btn').addEventListener('click', savePasswords);
 
   $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
   $('photo-upload').addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files);
-    for (const file of files) {
-      try {
-        const dataUrl = await resizeAndCompress(file);
-        state.content.photos.push(dataUrl);
-        alert('Fotka přidána jako data URL (dočasně). Pro trvalé uložení ji musíš nahrát na GitHub do složky images/uploads/ a do content.json vložit cestu. Toto je jen náhled.');
-      } catch (err) {
-        console.error('Zpracování fotky selhalo', err);
-      }
+    const file = e.target.files[0];
+    if (!file) return;
+    const status = $('save-status');
+    status.textContent = 'Nahrávám fotku…';
+    status.style.color = 'var(--ink-soft)';
+    try {
+      const imageUrl = await uploadPhoto(file);
+      state.content.photos.push(imageUrl);
+      await saveContent(); // uložíme i content.json, aby se fotka objevila trvale
+      status.textContent = 'Fotka uložena ✓';
+      renderPhotos();
+    } catch (err) {
+      status.textContent = 'Chyba: ' + err.message;
+      status.style.color = 'var(--danger)';
     }
     e.target.value = '';
-    renderPhotos();
+    setTimeout(() => { status.textContent = ''; }, 4000);
   });
 
   $('save-token-btn').addEventListener('click', () => {
