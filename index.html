@@ -38,7 +38,12 @@
     justify-content: center;
     padding: 24px;
     min-height: 100vh;
-    overflow-y: auto;
+    overflow-y: auto; /* Scrollování zapnuto jen v hlavní části */
+  }
+
+  body.locked {
+    overflow: hidden; /* Zámek – žádný scroll */
+    align-items: center;
   }
 
   .hidden { display: none !important; }
@@ -123,7 +128,6 @@
     column-gap: 26px;
     row-gap: 10px;
     align-items: start;
-    /* Místo max-height a overflow necháme stránku přirozeně růst */
   }
 
   @keyframes rise {
@@ -131,7 +135,21 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  .topbar { grid-area: top; display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  /* Sticky top bar */
+  .topbar {
+    grid-area: top;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    padding: 8px 0;
+    z-index: 10;
+  }
 
   .pill {
     font-size: 0.72rem;
@@ -175,7 +193,7 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* Photo bars */
+  /* Photo bars – sticky, aby zůstaly vidět */
   .photo-bar {
     min-width: 0;
     display: flex;
@@ -183,6 +201,9 @@
     align-items: center;
     gap: 26px;
     padding-top: 6px;
+    position: sticky;
+    top: 80px; /* výška horní lišty */
+    align-self: start;
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
@@ -235,44 +256,34 @@
   #token-config summary { color: var(--ink-soft); }
   #token-status { font-size: 0.8rem; margin-top: 6px; }
 
-  /* Responzivní chování – mobil */
-  @media (max-width: 900px) {
-    body {
+  /* Mobil – zachovat rozložení, ale zmenšit fotky a sloupce */
+  @media (max-width: 750px) {
+    body:not(.locked) {
       align-items: flex-start;
       padding: 16px;
     }
     #page {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "top"
-        "left"
-        "center"
-        "right";
-      padding: 32px 22px;
+      grid-template-columns: minmax(70px, 1fr) minmax(220px, 400px) minmax(70px, 1fr);
+      padding: 28px 18px;
+      column-gap: 12px;
     }
-    #lock-screen { padding: 44px 26px 36px; }
-    #site-title { font-size: 1.9rem; }
-    .photo-bar {
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 18px;
-      margin-top: 18px;
-      max-height: none;
-      overflow-y: visible;
-    }
-    .topbar { flex-wrap: wrap; row-gap: 8px; }
+    .polaroid { width: 90px; padding: 5px 5px 20px; }
+    .polaroid.big { width: 110px; }
+    #site-title { font-size: 1.7rem; }
+    .photo-bar { gap: 18px; top: 70px; }
   }
 
-  @media (max-width: 600px) {
-    body { padding: 12px; }
-    #page { padding: 26px 16px; }
-    #lock-screen { padding: 38px 20px 30px; max-width: 100%; }
-    #site-title { font-size: 1.55rem; margin-left: -6px; width: calc(100% + 12px); padding: 4px 6px; }
-    #site-text { font-size: 1rem; }
-    .photo-bar { gap: 16px; }
-    .polaroid { width: 96px; padding: 6px 6px 26px; }
-    .polaroid.big { width: 118px; }
+  @media (max-width: 500px) {
+    body:not(.locked) { padding: 8px; }
+    #page {
+      grid-template-columns: minmax(55px, 1fr) minmax(180px, 300px) minmax(55px, 1fr);
+      padding: 20px 12px;
+      column-gap: 8px;
+    }
+    .polaroid { width: 70px; padding: 4px 4px 16px; }
+    .polaroid.big { width: 85px; }
+    #site-title { font-size: 1.4rem; }
+    .photo-bar { gap: 12px; top: 60px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -283,7 +294,7 @@
   }
 </style>
 </head>
-<body>
+<body class="locked">
 
 <div id="loading">Načítám…</div>
 <div id="lock-screen" class="hidden">
@@ -671,6 +682,7 @@
 
     $('lock-screen').classList.add('hidden');
     $('main-wrap').classList.remove('hidden');
+    document.body.classList.remove('locked'); // Povolit scrollování
 
     if (state.role === 'admin') {
       $('role-badge').classList.remove('hidden');
@@ -720,12 +732,14 @@
     $('password-input').value = '';
     $('password-input').focus();
     $('error-msg').classList.add('hidden');
+    document.body.classList.add('locked'); // Zákaz scrollování na zámku
   });
 
   async function init() {
     $('loading').classList.add('hidden');
     $('lock-screen').classList.remove('hidden');
     $('password-input').focus();
+    document.body.classList.add('locked');
   }
 
   init();
