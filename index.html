@@ -625,20 +625,35 @@
     renderPhotos();
   }
 
-  async function resizeAndCompress(file) {
-    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-    let { width, height } = bitmap;
-    if (width > MAX_DIM || height > MAX_DIM) {
-      if (width > height) { height = Math.round(height * MAX_DIM / width); width = MAX_DIM; }
-      else { width = Math.round(width * MAX_DIM / height); height = MAX_DIM; }
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(bitmap, 0, 0, width, height);
-    bitmap.close();
-    return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+    async function resizeAndCompress(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round(height * MAX_DIM / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round(width * MAX_DIM / height);
+            height = MAX_DIM;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', JPEG_QUALITY));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Obrázek se nepodařilo načíst – zkontrolujte, zda je soubor platný.'));
+      };
+      img.src = url;
+    });
   }
 
   async function saveContent() {
