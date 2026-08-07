@@ -79,7 +79,7 @@
     line-height: 1.6;
     resize: vertical;
     min-height: 160px;
-    max-height: none;          /* ← opraveno: žádné omezení výšky */
+    max-height: none;
     overflow-wrap: break-word;
     word-break: break-word;
   }
@@ -163,13 +163,12 @@
     text-transform: uppercase;
   }
 
-  /* ✅ Středový sloupec – vyšší vrstva, aby fotky nikdy nepřekryly text */
   #text-column {
     grid-area: center;
     min-width: 0;
     position: relative;
     z-index: 2;
-    background: var(--paper);      /* vlastní pozadí zakryje fotky pod ním */
+    background: var(--paper);
   }
 
   #site-title {
@@ -201,7 +200,7 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* Postranní bary – fotky v nižší vrstvě, oříznuté */
+  /* Postranní bary – už bez overflow: hidden */
   .photo-bar {
     min-width: 0;
     display: flex;
@@ -211,10 +210,9 @@
     gap: 26px;
     padding-top: 6px;
     height: 100%;
-    overflow: hidden;             /* Ořízne přetékající rotace */
-    contain: layout paint;
+    /* overflow: hidden; odstraněno – umožní plný stín a dolní okraj */
     position: relative;
-    z-index: 1;                   /* Nižší vrstva než textový sloupec */
+    z-index: 1;
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
@@ -390,7 +388,7 @@
   const SALT = 'ministranka-salt-9f2';
   const MAX_DIM = 1600;
   const JPEG_QUALITY = 0.8;
-  const REPO = 'lunarfrost5/kld';
+  const REPO = 'borekstack34/zulidlo';
   const BRANCH = 'main';
 
   let state = {
@@ -512,7 +510,6 @@
     const sign = (rotHash % 2 === 0) ? 1 : -1;
     const magnitude = 2 + ((rotHash % 1000) / 1000) * 5;
     const rot = sign * magnitude;
-    // Na malých displejích vypneme horizontální posun, aby fotky neujížděly
     const shift = (window.innerWidth <= 750) ? 0 : ((hashStr(url + 's') % 1000) / 1000) * 22 - 11;
     const big = (hashStr(url + 'z') % 2) === 0;
     return { rot, shift, big };
