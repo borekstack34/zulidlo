@@ -26,6 +26,7 @@
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
+  html { scroll-padding-top: 100px; } /* Zabraňuje překrytí obsahem sticky lišty */
   html, body { height: 100%; margin: 0; }
 
   body {
@@ -38,11 +39,11 @@
     justify-content: center;
     padding: 24px;
     min-height: 100vh;
-    overflow-y: auto; /* Scrollování zapnuto jen v hlavní části */
+    overflow-y: auto;
   }
 
   body.locked {
-    overflow: hidden; /* Zámek – žádný scroll */
+    overflow: hidden;
     align-items: center;
   }
 
@@ -147,7 +148,7 @@
     position: sticky;
     top: 0;
     background: var(--paper);
-    padding: 8px 0;
+    padding: 12px 0;
     z-index: 10;
   }
 
@@ -193,7 +194,7 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* Photo bars – sticky, aby zůstaly vidět */
+  /* Photo bars – již ne sticky, normálně tečou se stránkou */
   .photo-bar {
     min-width: 0;
     display: flex;
@@ -201,9 +202,6 @@
     align-items: center;
     gap: 26px;
     padding-top: 6px;
-    position: sticky;
-    top: 80px; /* výška horní lišty */
-    align-self: start;
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
@@ -229,6 +227,26 @@
 
   .polaroid .photo-inner { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--paper-deep); }
   .polaroid img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+
+  .photo-delete {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    font-size: 15px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transform: rotate(calc(-1 * var(--rot)));
+  }
 
   /* Lightbox */
   #lightbox {
@@ -256,12 +274,9 @@
   #token-config summary { color: var(--ink-soft); }
   #token-status { font-size: 0.8rem; margin-top: 6px; }
 
-  /* Mobil – zachovat rozložení, ale zmenšit fotky a sloupce */
+  /* Mobilní verze – stále tři sloupce, ale menší a bez překrývání */
   @media (max-width: 750px) {
-    body:not(.locked) {
-      align-items: flex-start;
-      padding: 16px;
-    }
+    body:not(.locked) { padding: 16px; }
     #page {
       grid-template-columns: minmax(70px, 1fr) minmax(220px, 400px) minmax(70px, 1fr);
       padding: 28px 18px;
@@ -270,7 +285,7 @@
     .polaroid { width: 90px; padding: 5px 5px 20px; }
     .polaroid.big { width: 110px; }
     #site-title { font-size: 1.7rem; }
-    .photo-bar { gap: 18px; top: 70px; }
+    .photo-bar { gap: 18px; }
   }
 
   @media (max-width: 500px) {
@@ -283,7 +298,7 @@
     .polaroid { width: 70px; padding: 4px 4px 16px; }
     .polaroid.big { width: 85px; }
     #site-title { font-size: 1.4rem; }
-    .photo-bar { gap: 12px; top: 60px; }
+    .photo-bar { gap: 12px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -319,10 +334,10 @@
       <p id="empty-note" class="hidden">Zatím tu nic není.</p>
 
       <div id="admin-controls" class="hidden">
-        <input type="file" id="photo-upload" accept="image/*" class="hidden">
+        <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
         <div id="save-row">
           <button class="btn-primary btn-inline" id="save-btn">Uložit změny</button>
-          <button class="btn-ghost" id="add-photo-btn">Přidat fotku</button>
+          <button class="btn-ghost" id="add-photo-btn">Přidat fotky</button>
           <span id="save-status"></span>
         </div>
 
@@ -489,6 +504,13 @@
     return { rot, shift, big };
   }
 
+  function deletePhoto(index) {
+    if (confirm('Opravdu smazat tuto fotku?')) {
+      state.content.photos.splice(index, 1);
+      renderPhotos();
+    }
+  }
+
   function renderPhotos() {
     const leftBar = $('photo-bar-left');
     const rightBar = $('photo-bar-right');
@@ -510,6 +532,18 @@
       img.addEventListener('click', () => openLightbox(url));
       inner.appendChild(img);
       item.appendChild(inner);
+
+      if (state.role === 'admin') {
+        const delBtn = document.createElement('button');
+        delBtn.className = 'photo-delete';
+        delBtn.innerHTML = '&times;';
+        delBtn.title = 'Smazat fotku';
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deletePhoto(index);
+        });
+        item.appendChild(delBtn);
+      }
 
       const targetBar = index % 2 === 0 ? leftBar : rightBar;
       targetBar.appendChild(item);
@@ -643,16 +677,17 @@
 
   $('add-photo-btn').addEventListener('click', () => $('photo-upload').click());
   $('photo-upload').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
     const status = $('save-status');
-    status.textContent = 'Nahrávám fotku…';
+    status.textContent = 'Nahrávám fotky…';
     status.style.color = 'var(--ink-soft)';
     try {
-      const imageUrl = await uploadPhoto(file);
-      state.content.photos.push(imageUrl);
-      await saveContent();
-      status.textContent = 'Fotka uložena ✓';
+      for (const file of files) {
+        const imageUrl = await uploadPhoto(file);
+        state.content.photos.push(imageUrl);
+      }
+      status.textContent = 'Fotky uloženy ✓';
       renderPhotos();
     } catch (err) {
       status.textContent = 'Chyba: ' + err.message;
@@ -732,7 +767,7 @@
     $('password-input').value = '';
     $('password-input').focus();
     $('error-msg').classList.add('hidden');
-    document.body.classList.add('locked'); // Zákaz scrollování na zámku
+    document.body.classList.add('locked');
   });
 
   async function init() {
