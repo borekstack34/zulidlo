@@ -198,7 +198,7 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* PC verze – postranní bary s drop-shadow a overflow:hidden */
+  /* PC verze */
   .photo-bar {
     min-width: 0;
     display: flex;
@@ -281,7 +281,7 @@
   #token-config summary { color: var(--ink-soft); }
   #token-status { font-size: 0.8rem; margin-top: 6px; }
 
-  /* ========== MOBILNÍ VERZE – přebírá drop-shadow jako PC ========== */
+  /* ========== MOBIL – BEZ STÍNU, čistý vzhled ========== */
   @media (max-width: 750px) {
     body:not(.locked) { padding: 16px; }
     #page {
@@ -291,19 +291,20 @@
       align-items: start;
     }
     .photo-bar {
-      overflow: hidden;           /* ořezává pouze přetékající stíny do stran */
+      overflow: hidden;
       height: auto;
       justify-content: flex-start;
       gap: 12px;
-      padding-top: 12px;         /* místo pro horní stín */
-      padding-bottom: 12px;      /* místo pro dolní stín */
+      padding-top: 12px;
+      padding-bottom: 12px;
     }
     .polaroid {
       width: 65px;
       padding: 4px 4px 16px;
-      margin: 0;                /* žádné vnější okraje – spoléháme na padding rodiče */
-      filter: drop-shadow(0 14px 26px rgba(20,10,30,0.35)) drop-shadow(0 3px 8px rgba(20,10,30,0.2));
-      box-shadow: none;         /* vypínáme klasický stín */
+      margin: 0;
+      filter: none;            /* žádný drop-shadow */
+      box-shadow: none;        /* žádný box-shadow */
+      /* Místo stínu lze přidat např. border: 1px solid var(--paper-deep); pokud chceš rámeček */
     }
     .polaroid.big { width: 75px; }
     #site-title { font-size: 1.7rem; }
