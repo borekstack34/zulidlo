@@ -132,7 +132,7 @@
       "left center right";
     column-gap: 26px;
     row-gap: 10px;
-    align-items: stretch;   /* PC – roztáhne sloupce na stejnou výšku */
+    align-items: stretch;
   }
 
   @keyframes rise {
@@ -198,7 +198,7 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* PC verze – postranní bary s overflow: hidden a drop-shadow */
+  /* PC verze – postranní bary s drop-shadow a overflow:hidden */
   .photo-bar {
     min-width: 0;
     display: flex;
@@ -281,27 +281,29 @@
   #token-config summary { color: var(--ink-soft); }
   #token-status { font-size: 0.8rem; margin-top: 6px; }
 
-  /* ========== MOBILNÍ VERZE – stín zůstane u fotek ========== */
+  /* ========== MOBILNÍ VERZE – přebírá drop-shadow jako PC ========== */
   @media (max-width: 750px) {
     body:not(.locked) { padding: 16px; }
     #page {
       grid-template-columns: minmax(60px, 1fr) minmax(200px, 1fr) minmax(60px, 1fr);
       padding: 24px 16px;
       column-gap: 8px;
-      align-items: start;                 /* sloupce se nepřizpůsobují, každý svou výšku */
+      align-items: start;
     }
     .photo-bar {
-      overflow: hidden;                   /* ořízne cokoliv za hranicí sloupce */
+      overflow: hidden;           /* ořezává pouze přetékající stíny do stran */
       height: auto;
       justify-content: flex-start;
-      gap: 12px;                          /* menší mezera mezi fotkami */
+      gap: 12px;
+      padding-top: 12px;         /* místo pro horní stín */
+      padding-bottom: 12px;      /* místo pro dolní stín */
     }
     .polaroid {
       width: 65px;
       padding: 4px 4px 16px;
-      margin: 10px 0;                     /* prostor pro stín, aby nebyl oříznut */
-      filter: none;
-      box-shadow: 0 14px 26px rgba(20,10,30,0.35), 0 3px 8px rgba(20,10,30,0.2);
+      margin: 0;                /* žádné vnější okraje – spoléháme na padding rodiče */
+      filter: drop-shadow(0 14px 26px rgba(20,10,30,0.35)) drop-shadow(0 3px 8px rgba(20,10,30,0.2));
+      box-shadow: none;         /* vypínáme klasický stín */
     }
     .polaroid.big { width: 75px; }
     #site-title { font-size: 1.7rem; }
@@ -314,10 +316,10 @@
       padding: 16px 12px;
       column-gap: 6px;
     }
-    .polaroid { width: 55px; padding: 3px 3px 12px; margin: 8px 0; }
+    .polaroid { width: 55px; padding: 3px 3px 12px; }
     .polaroid.big { width: 65px; }
     #site-title { font-size: 1.4rem; }
-    .photo-bar { gap: 10px; }
+    .photo-bar { gap: 10px; padding-top: 10px; padding-bottom: 10px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
