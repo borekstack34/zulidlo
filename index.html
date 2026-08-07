@@ -132,7 +132,7 @@
       "left center right";
     column-gap: 26px;
     row-gap: 10px;
-    align-items: stretch;
+    align-items: start;    /* změna: sloupce se nepřizpůsobují výšce */
   }
 
   @keyframes rise {
@@ -167,6 +167,9 @@
     position: relative;
     z-index: 2;
     background: var(--paper);
+    /* Přidáme boční odsazení, aby stíny fotek nezasahovaly do textu */
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   #site-title {
@@ -198,18 +201,14 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* PC verze – postranní bary s drop-shadow a overflow:hidden */
+  /* Postranní bary – BEZ overflow:hidden, stín se volně rozlije */
   .photo-bar {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     gap: 26px;
     padding-top: 6px;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
     z-index: 1;
   }
   #photo-bar-left { grid-area: left; }
@@ -221,10 +220,11 @@
     width: 110px;
     background: #fff;
     padding: 7px 7px 24px;
-    filter: drop-shadow(0 14px 26px rgba(20,10,30,0.35)) drop-shadow(0 3px 8px rgba(20,10,30,0.2));
+    /* Použijeme klasický box-shadow, který netrpí na mobilních bugy */
+    box-shadow: 0 14px 26px rgba(20,10,30,0.35), 0 3px 8px rgba(20,10,30,0.2);
     position: relative;
     transform: rotate(var(--rot)) translateX(var(--shift));
-    transition: transform 0.2s ease, filter 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .polaroid.big { width: 130px; }
   .polaroid:hover {
@@ -281,31 +281,26 @@
   #token-config summary { color: var(--ink-soft); }
   #token-status { font-size: 0.8rem; margin-top: 6px; }
 
-  /* ========== MOBIL – PŮVODNÍ LAYOUT, POUZE BEZ STÍNU ========== */
+  /* ========== MOBILNÍ VERZE ========== */
   @media (max-width: 750px) {
     body:not(.locked) { padding: 16px; }
     #page {
       grid-template-columns: minmax(60px, 1fr) minmax(200px, 1fr) minmax(60px, 1fr);
       padding: 24px 16px;
       column-gap: 8px;
-      align-items: start;
     }
-    .photo-bar {
-      overflow: hidden;       /* zůstává, aby fotky nepřetékaly do textu */
-      height: auto;
-      justify-content: flex-start;
-      gap: 18px;
-      padding-top: 6px;
-      padding-bottom: 6px;
+    #text-column {
+      margin-left: 6px;
+      margin-right: 6px;
     }
     .polaroid {
       width: 65px;
       padding: 4px 4px 16px;
-      filter: none;           /* žádný drop-shadow */
-      box-shadow: none;       /* žádný box-shadow */
+      box-shadow: 0 10px 20px rgba(20,10,30,0.3), 0 2px 6px rgba(20,10,30,0.15);
     }
     .polaroid.big { width: 75px; }
     #site-title { font-size: 1.7rem; }
+    .photo-bar { gap: 18px; }
   }
 
   @media (max-width: 500px) {
@@ -314,6 +309,10 @@
       grid-template-columns: minmax(45px, 1fr) minmax(160px, 1fr) minmax(45px, 1fr);
       padding: 16px 12px;
       column-gap: 6px;
+    }
+    #text-column {
+      margin-left: 4px;
+      margin-right: 4px;
     }
     .polaroid { width: 55px; padding: 3px 3px 12px; }
     .polaroid.big { width: 65px; }
@@ -397,7 +396,7 @@
   const SALT = 'ministranka-salt-9f2';
   const MAX_DIM = 1600;
   const JPEG_QUALITY = 0.8;
-  const REPO = 'lunarfrost5/kld';
+  const REPO = 'lunarfrost5/kld';    // <-- aktuální repozitář
   const BRANCH = 'main';
 
   let state = {
