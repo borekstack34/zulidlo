@@ -139,7 +139,7 @@
       "left center right";
     column-gap: 26px;
     row-gap: 10px;
-    align-items: stretch;
+    align-items: start;
   }
 
   @keyframes rise {
@@ -211,7 +211,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 26px;
     padding-top: 6px;
   }
@@ -288,37 +287,30 @@
   }
   .theme-swatch.active { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 0 2px 6px rgba(0,0,0,0.25); }
 
-  /* Tablets / large phones: keep the 3-column layout, just narrow the photo
-     rails so the text column stays readable at this width. */
+  /* Tablets / large phones: collapse the 3-column layout to one column so
+     nothing gets squeezed. Photos flow below the text in a wrapped row. */
   @media (max-width: 860px) {
     body:not(.locked) { padding: 16px; }
     #page {
-      grid-template-columns: 60px 1fr 60px;
-      grid-template-areas:
-        "top top top"
-        "left center right";
-      column-gap: 10px;
-      padding: 26px 16px;
+      grid-template-columns: 1fr;
+      grid-template-areas: "top" "center" "left" "right";
+      padding: 30px 20px;
     }
-    .photo-bar { flex-direction: column; gap: 14px; margin-top: 0; padding-top: 4px; }
-    .polaroid { width: 54px; padding: 4px 4px 14px; }
-    .polaroid.big { width: 62px; }
-    .photo-delete { width: 20px; height: 20px; font-size: 12px; top: -6px; right: -6px; }
-    #site-title { font-size: 1.7rem; }
+    .photo-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 18px; padding-top: 0; }
+    #site-title { font-size: 1.9rem; }
   }
 
-  /* Phones: rails narrow further still, photos become small tap-to-enlarge
-     thumbnails rather than full previews - the lightbox handles the rest. */
+  /* Phones */
   @media (max-width: 480px) {
     body:not(.locked) { padding: 10px; }
     #lock-screen { padding: 40px 22px 32px; max-width: 100%; }
-    #page { grid-template-columns: 46px 1fr 46px; column-gap: 7px; padding: 20px 10px; }
-    #site-title { font-size: 1.35rem; margin-left: -4px; width: calc(100% + 8px); padding: 4px 4px; }
+    #page { padding: 24px 16px; }
+    #site-title { font-size: 1.55rem; margin-left: -6px; width: calc(100% + 12px); padding: 4px 6px; }
     #site-text, textarea#edit-text { font-size: 1rem; }
-    .photo-bar { gap: 10px; }
-    .polaroid { width: 40px; padding: 3px 3px 10px; }
-    .polaroid.big { width: 46px; }
-    .photo-delete { width: 18px; height: 18px; font-size: 11px; top: -5px; right: -5px; }
+    .photo-bar { gap: 14px; }
+    .polaroid { width: 92px; padding: 6px 6px 22px; }
+    .polaroid.big { width: 112px; }
+    .photo-delete { width: 28px; height: 28px; font-size: 16px; top: -9px; right: -9px; }
     #save-row { flex-direction: column; align-items: stretch; gap: 10px; }
     .btn-inline { width: 100%; }
     .pw-row { flex-direction: column; }
@@ -404,8 +396,8 @@
 <script>
 (function() {
   const SALT = 'ministranka-salt-9f2';
-  const MAX_DIM = 2200;
-  const JPEG_QUALITY = 0.88;
+  const MAX_DIM = 1600;
+  const JPEG_QUALITY = 0.8;
   const REPO = 'lunarfrost5/kld';
   const BRANCH = 'main';
 
