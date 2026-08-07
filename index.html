@@ -38,11 +38,11 @@
     justify-content: center;
     padding: 24px;
     min-height: 100vh;
-    overflow-y: auto; /* Normální scrollování */
+    overflow-y: auto; /* Normální scrollování celé stránky */
   }
 
   body.locked {
-    overflow: hidden; /* Zámek – jen při přihlašování */
+    overflow: hidden;
     align-items: center;
   }
 
@@ -112,7 +112,7 @@
 
   #error-msg { color: var(--danger); font-size: 0.85rem; margin: 16px 0 0; }
 
-  /* Hlavní stránka – nic není sticky, vše teče */
+  /* Hlavní stránka – nic sticky, vše teče */
   #main-wrap { width: 100%; max-width: 1080px; animation: rise 0.5s ease both; }
 
   #page {
@@ -127,7 +127,7 @@
       "left center right";
     column-gap: 26px;
     row-gap: 10px;
-    align-items: start; /* Zarovnání na vršek, žádné roztahování */
+    align-items: stretch; /* ← ZDE JE OPRAVA: sloupce se roztáhnou na výšku textu */
   }
 
   @keyframes rise {
@@ -135,7 +135,6 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Horní lišta – normální blok */
   .topbar {
     grid-area: top;
     display: flex;
@@ -188,14 +187,16 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* Postranní bary – fotky se řadí pod sebe */
+  /* Postranní bary – roztáhnou se na celou výšku a fotky se v nich rozmístí */
   .photo-bar {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    justify-content: space-between; /* Fotky se rozmístí rovnoměrně po celé výšce */
     align-items: center;
     gap: 26px;
     padding-top: 6px;
+    height: 100%; /* Zabere celou výšku řádku gridu (která je určena textem) */
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
@@ -203,7 +204,7 @@
   .polaroid {
     --rot: 0deg;
     --shift: 0px;
-    width: 110px; /* Zmenšeno, aby se vešlo víc fotek */
+    width: 110px;
     background: #fff;
     padding: 7px 7px 24px;
     box-shadow: 0 14px 26px rgba(20,10,30,0.35), 0 3px 8px rgba(20,10,30,0.2);
