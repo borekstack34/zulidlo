@@ -38,7 +38,7 @@
     justify-content: center;
     padding: 24px;
     min-height: 100vh;
-    overflow-y: auto; /* Normální scrollování celé stránky */
+    overflow-y: auto;
   }
 
   body.locked {
@@ -112,7 +112,7 @@
 
   #error-msg { color: var(--danger); font-size: 0.85rem; margin: 16px 0 0; }
 
-  /* Hlavní stránka – nic sticky, vše teče */
+  /* Hlavní stránka */
   #main-wrap { width: 100%; max-width: 1080px; animation: rise 0.5s ease both; }
 
   #page {
@@ -127,7 +127,7 @@
       "left center right";
     column-gap: 26px;
     row-gap: 10px;
-    align-items: stretch; /* ← ZDE JE OPRAVA: sloupce se roztáhnou na výšku textu */
+    align-items: stretch;
   }
 
   @keyframes rise {
@@ -187,16 +187,18 @@
 
   #empty-note { color: var(--ink-soft); font-style: italic; font-size: 0.95rem; }
 
-  /* Postranní bary – roztáhnou se na celou výšku a fotky se v nich rozmístí */
+  /* Postranní bary */
   .photo-bar {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Fotky se rozmístí rovnoměrně po celé výšce */
+    justify-content: space-between;
     align-items: center;
     gap: 26px;
     padding-top: 6px;
-    height: 100%; /* Zabere celou výšku řádku gridu (která je určena textem) */
+    height: 100%;
+    overflow: hidden; /* Zabraňuje přetékání fotek mimo sloupec */
+    contain: layout paint;
   }
   #photo-bar-left { grid-area: left; }
   #photo-bar-right { grid-area: right; }
@@ -273,12 +275,12 @@
   @media (max-width: 750px) {
     body:not(.locked) { padding: 16px; }
     #page {
-      grid-template-columns: minmax(65px, 1fr) minmax(220px, 400px) minmax(65px, 1fr);
-      padding: 28px 18px;
-      column-gap: 12px;
+      grid-template-columns: minmax(60px, 1fr) minmax(200px, 1fr) minmax(60px, 1fr);
+      padding: 24px 16px;
+      column-gap: 8px;
     }
-    .polaroid { width: 80px; padding: 5px 5px 18px; }
-    .polaroid.big { width: 95px; }
+    .polaroid { width: 65px; padding: 4px 4px 16px; }
+    .polaroid.big { width: 75px; }
     #site-title { font-size: 1.7rem; }
     .photo-bar { gap: 18px; }
   }
@@ -286,12 +288,12 @@
   @media (max-width: 500px) {
     body:not(.locked) { padding: 8px; }
     #page {
-      grid-template-columns: minmax(50px, 1fr) minmax(180px, 300px) minmax(50px, 1fr);
-      padding: 20px 12px;
-      column-gap: 8px;
+      grid-template-columns: minmax(45px, 1fr) minmax(160px, 1fr) minmax(45px, 1fr);
+      padding: 16px 12px;
+      column-gap: 6px;
     }
-    .polaroid { width: 65px; padding: 4px 4px 14px; }
-    .polaroid.big { width: 75px; }
+    .polaroid { width: 55px; padding: 3px 3px 12px; }
+    .polaroid.big { width: 65px; }
     #site-title { font-size: 1.4rem; }
     .photo-bar { gap: 12px; }
   }
@@ -372,7 +374,7 @@
   const SALT = 'ministranka-salt-9f2';
   const MAX_DIM = 1600;
   const JPEG_QUALITY = 0.8;
-  const REPO = 'lunarfrost5/kld';
+  const REPO = 'borekstack34/zulidlo';
   const BRANCH = 'main';
 
   let state = {
@@ -494,7 +496,8 @@
     const sign = (rotHash % 2 === 0) ? 1 : -1;
     const magnitude = 2 + ((rotHash % 1000) / 1000) * 5;
     const rot = sign * magnitude;
-    const shift = ((hashStr(url + 's') % 1000) / 1000) * 22 - 11;
+    // Na mobilu zakážeme horizontální posun
+    const shift = (window.innerWidth <= 750) ? 0 : ((hashStr(url + 's') % 1000) / 1000) * 22 - 11;
     const big = (hashStr(url + 'z') % 2) === 0;
     return { rot, shift, big };
   }
